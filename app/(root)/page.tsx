@@ -1,3 +1,4 @@
+import { CreateServer } from "@/components/modal/create-server";
 import { db } from "@/lib/db";
 import { InitialProfile } from "@/lib/initial-profile";
 import { redirect } from "next/navigation";
@@ -19,5 +20,9 @@ export default async function Home() {
     return redirect(`/servers/${server.id}`);
   }
 
-  return <div>Create server</div>;
+  return (
+    <div>
+      <CreateServer />
+    </div>
+  );
 }
