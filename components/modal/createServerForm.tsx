@@ -13,7 +13,7 @@ import {
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createServer, TCreateServer } from "@/lib/zod/server-validation";
+
 import {
   Form,
   FormControl,
@@ -23,18 +23,42 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { FileUpload } from "../fileUpload";
+import {
+  createServerSchema,
+  TCreateServerSchema,
+} from "@/lib/zod-schema/server-schema";
+import { useMutation } from "@tanstack/react-query";
+import { createServerAction } from "@/app/(root)/actions/createServerActions";
+import { Spinner } from "../spinner";
+import { ErrorMessage } from "../error-message";
+import { SuccessMessage } from "../success-message";
+import { useRouter } from "next/navigation";
 
-export function CreateServer() {
-  const form = useForm<TCreateServer>({
-    resolver: zodResolver(createServer),
+export function CreateServerForm() {
+  const router = useRouter();
+
+  const form = useForm<TCreateServerSchema>({
+    resolver: zodResolver(createServerSchema),
     defaultValues: {
       serverName: "",
       imageUrl: "",
     },
   });
 
-  const onSubmit = async (values: TCreateServer) => {
-    console.log(values);
+  const { mutate, isPending, data } = useMutation({
+    mutationKey: ["create-server"],
+    mutationFn: createServerAction,
+    onSuccess: (data) => {
+      if (data.success) {
+        form.reset();
+        router.push("/");
+      }
+    },
+  });
+
+  const onSubmit = async (values: TCreateServerSchema) => {
+    mutate(values);
   };
 
   return (
@@ -45,6 +69,14 @@ export function CreateServer() {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
+            <div className="mt-3">
+              {data && data.error ? <ErrorMessage message={data.error} /> : ""}
+              {data && data.success ? (
+                <SuccessMessage message={data.success} />
+              ) : (
+                ""
+              )}
+            </div>
             <DialogTitle className="text-2xl">
               Customize your server
             </DialogTitle>
@@ -61,6 +93,22 @@ export function CreateServer() {
               >
                 <FormField
                   control={form.control}
+                  name="imageUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <FileUpload
+                          endpoint="serverImage"
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
                   name="serverName"
                   render={({ field }) => (
                     <FormItem>
@@ -69,6 +117,7 @@ export function CreateServer() {
                         <Input
                           type="text"
                           placeholder="Enter server name"
+                          disabled={isPending}
                           {...field}
                         />
                       </FormControl>
@@ -77,7 +126,9 @@ export function CreateServer() {
                   )}
                 />
                 <DialogFooter>
-                  <Button type="submit">Save </Button>
+                  <Button disabled={isPending} type="submit">
+                    {isPending ? <Spinner /> : "Create"}
+                  </Button>
                 </DialogFooter>
               </form>
             </Form>

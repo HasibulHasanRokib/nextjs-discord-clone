@@ -1,6 +1,7 @@
-import { CreateServer } from "@/components/modal/create-server";
+import { CreateServerForm } from "@/components/modal/createServerForm";
 import { db } from "@/lib/db";
 import { InitialProfile } from "@/lib/initial-profile";
+import { UserButton } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
@@ -17,12 +18,13 @@ export default async function Home() {
   });
 
   if (server) {
-    return redirect(`/servers/${server.id}`);
+    return redirect(`/server/${server.id}`);
   }
 
   return (
     <div>
-      <CreateServer />
+      <CreateServerForm />
+      <UserButton />
     </div>
   );
 }

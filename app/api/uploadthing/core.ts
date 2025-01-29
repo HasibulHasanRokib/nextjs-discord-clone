@@ -20,7 +20,7 @@ export const ourFileRouter = {
     .onUploadComplete(() => {
       console.log("Server Image Upload complete");
     }),
-  messageImage: f(["image", "pdf"])
+  messageFile: f(["image", "pdf"])
     .middleware(() => handleAuth())
     .onUploadComplete(() => {
       console.log("Message image Upload complete");
