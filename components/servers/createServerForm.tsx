@@ -7,7 +7,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import { Button } from "../ui/button";
@@ -29,13 +28,17 @@ import {
   TCreateServerSchema,
 } from "@/lib/zod-schema/server-schema";
 import { useMutation } from "@tanstack/react-query";
-import { createServerAction } from "@/app/(root)/actions/createServerActions";
+import { createServerAction } from "@/app/actions/createServerActions";
 import { Spinner } from "../spinner";
 import { ErrorMessage } from "../error-message";
 import { SuccessMessage } from "../success-message";
 import { useRouter } from "next/navigation";
+import { useModal } from "@/store/modal-store";
 
 export function CreateServerForm() {
+  const { isOpen, type, onClose } = useModal();
+
+  const isModalOpen = isOpen && type === "create-servers";
   const router = useRouter();
 
   const form = useForm<TCreateServerSchema>({
@@ -61,12 +64,14 @@ export function CreateServerForm() {
     mutate(values);
   };
 
+  const handleChange = () => {
+    form.reset();
+    onClose();
+  };
+
   return (
     <div>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button>Create server</Button>
-        </DialogTrigger>
+      <Dialog open={isModalOpen} onOpenChange={handleChange}>
         <DialogContent>
           <DialogHeader>
             <div className="mt-3">

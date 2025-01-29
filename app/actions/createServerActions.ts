@@ -7,7 +7,7 @@ import {
   TCreateServerSchema,
 } from "@/lib/zod-schema/server-schema";
 import { MemberRole } from "@prisma/client";
-import { uuid } from "uuidv4";
+import { v4 as uuid } from "uuid";
 
 export async function createServerAction(values: TCreateServerSchema) {
   try {
@@ -15,23 +15,25 @@ export async function createServerAction(values: TCreateServerSchema) {
     if (!validation.success) return { error: "Invalid inputs!" };
 
     const { imageUrl, serverName } = validation.data;
+    console.log({ imageUrl, serverName });
 
     const profile = await CurrentUser();
+    console.log({ profile });
 
     if (!profile) return { error: "Unauthorized" };
-    await db.server.create({
+    const newServer = await db.server.create({
       data: {
         serverName,
         imageUrl,
         profileId: profile.id,
-        inviteLink: uuid(),
-        channel: {
+        inviteCode: uuid(),
+        channels: {
           create: {
             channelName: "general",
             profileId: profile.id,
           },
         },
-        member: {
+        members: {
           create: {
             profileId: profile.id,
             role: MemberRole.ADMIN,
@@ -39,9 +41,10 @@ export async function createServerAction(values: TCreateServerSchema) {
         },
       },
     });
+    console.log({ newServer });
     return { success: "Server create successful." };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { error: "Something went wrong!" };
   }
 }

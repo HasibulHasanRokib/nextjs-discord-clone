@@ -13,9 +13,9 @@ model Profile {
   name     String
   imageUrl String    @db.Text
   email    String
-  server   Server[]
-  member   Member[]
-  channel  Channel[]
+  servers  Server[]
+  members  Member[]
+  channels Channel[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -25,13 +25,13 @@ model Server {
   id         String @id @default(cuid())
   serverName String
   imageUrl   String @db.Text
-  inviteLink String @db.Text
+  inviteCode String @unique
 
-  Profile   Profile? @relation(fields: [profileId], references: [id])
-  profileId String?
+  Profile   Profile @relation(fields: [profileId], references: [id])
+  profileId String
 
-  member  Member[]
-  channel Channel[]
+  members  Member[]
+  channels Channel[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -64,13 +64,13 @@ enum ChannelType {
 
 model Channel {
   id          String      @id @default(cuid())
-  channelName String      @unique
+  channelName String
   channelType ChannelType @default(TEXT)
 
   Profile   Profile? @relation(fields: [profileId], references: [id])
   profileId String?
-  Server    Server?  @relation(fields: [serverId], references: [id])
-  serverId  String?
+  Server    Server   @relation(fields: [serverId], references: [id])
+  serverId  String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

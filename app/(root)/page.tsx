@@ -1,4 +1,4 @@
-import { CreateServerForm } from "@/components/modal/createServerForm";
+import { CreateServerForm } from "@/components/servers/createServerForm";
 import { db } from "@/lib/db";
 import { InitialProfile } from "@/lib/initial-profile";
 import { UserButton } from "@clerk/nextjs";
@@ -9,7 +9,7 @@ export default async function Home() {
 
   const server = await db.server.findFirst({
     where: {
-      member: {
+      members: {
         some: {
           profileId: profile.id,
         },
