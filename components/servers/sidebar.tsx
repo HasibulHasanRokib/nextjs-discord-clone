@@ -28,7 +28,7 @@ export async function Sidebar() {
       <Separator className="my-2" />
       <ScrollArea className="flex-grow">
         {servers.map((server) => (
-          <div key={server.id}>
+          <div key={server.id} className="my-2">
             <ServerItem
               id={server.id}
               name={server.serverName}

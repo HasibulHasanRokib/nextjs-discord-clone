@@ -10,7 +10,7 @@ export function CreateServerBtn() {
     <TooltipAction label="Create server" side="right" aline="center">
       <button
         onClick={() => onOpen("create-servers")}
-        className="rounded-full bg-primary p-2 text-white hover:opacity-70"
+        className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white hover:opacity-80"
       >
         <Plus />
       </button>
