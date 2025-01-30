@@ -1,4 +1,4 @@
-import { CreateServerForm } from "@/components/servers/createServerForm";
+import { CreateServerForm } from "@/components/modals/create-server-modal";
 import { db } from "@/lib/db";
 import { InitialProfile } from "@/lib/initial-profile";
 import { UserButton } from "@clerk/nextjs";

@@ -4,7 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "./providers";
 import { dark } from "@clerk/themes";
-import { ModalProvider } from "@/components/modal-provider";
+import { ModalsProvider } from "@/components/modals/modals-provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -34,7 +34,7 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <ModalProvider />
+              <ModalsProvider />
               {children}
             </ThemeProvider>
           </body>

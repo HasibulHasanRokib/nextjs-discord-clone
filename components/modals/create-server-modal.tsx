@@ -22,7 +22,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { FileUpload } from "../fileUpload";
+import { FileUpload } from "../file-upload";
 import {
   createServerSchema,
   TCreateServerSchema,
@@ -35,7 +35,7 @@ import { SuccessMessage } from "../success-message";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/store/modal-store";
 
-export function CreateServerForm() {
+export function CreateServerModal() {
   const { isOpen, type, onClose } = useModal();
 
   const isModalOpen = isOpen && type === "create-servers";
@@ -56,6 +56,7 @@ export function CreateServerForm() {
       if (data.success) {
         form.reset();
         router.push("/");
+        onClose();
       }
     },
   });
@@ -70,7 +71,7 @@ export function CreateServerForm() {
   };
 
   return (
-    <div>
+    <>
       <Dialog open={isModalOpen} onOpenChange={handleChange}>
         <DialogContent>
           <DialogHeader>
@@ -140,6 +141,6 @@ export function CreateServerForm() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }
