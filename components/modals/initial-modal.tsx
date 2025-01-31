@@ -33,12 +33,8 @@ import { Spinner } from "../spinner";
 import { ErrorMessage } from "../error-message";
 import { SuccessMessage } from "../success-message";
 import { useRouter } from "next/navigation";
-import { useModal } from "@/store/modal-store";
 
-export function CreateServerModal() {
-  const { isOpen, type, onClose } = useModal();
-
-  const isModalOpen = isOpen && type === "create-servers";
+export function InitialModal() {
   const router = useRouter();
 
   const form = useForm<TCreateServerSchema>({
@@ -56,7 +52,6 @@ export function CreateServerModal() {
       if (data.success) {
         form.reset();
         router.push("/");
-        onClose();
       }
     },
   });
@@ -65,14 +60,9 @@ export function CreateServerModal() {
     mutate(values);
   };
 
-  const handleChange = () => {
-    form.reset();
-    onClose();
-  };
-
   return (
     <>
-      <Dialog open={isModalOpen} onOpenChange={handleChange}>
+      <Dialog open>
         <DialogContent>
           <DialogHeader>
             <div className="mt-3">

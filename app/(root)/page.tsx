@@ -1,7 +1,6 @@
-import { CreateServerForm } from "@/components/modals/create-server-modal";
+import { InitialModal } from "@/components/modals/initial-modal";
 import { db } from "@/lib/db";
 import { InitialProfile } from "@/lib/initial-profile";
-import { UserButton } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
@@ -23,8 +22,7 @@ export default async function Home() {
 
   return (
     <div>
-      <CreateServerForm />
-      <UserButton />
+      <InitialModal />
     </div>
   );
 }

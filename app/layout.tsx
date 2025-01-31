@@ -3,7 +3,6 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "./providers";
-import { dark } from "@clerk/themes";
 import { ModalsProvider } from "@/components/modals/modals-provider";
 
 export const metadata: Metadata = {
@@ -18,9 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider
-      appearance={{
-        baseTheme: dark,
-      }}
+    // appearance={{
+    //   baseTheme: dark,
+    // }}
     >
       <Providers>
         <html lang="en" suppressHydrationWarning>
