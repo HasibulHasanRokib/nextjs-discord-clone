@@ -23,12 +23,9 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { FileUpload } from "../file-upload";
-import {
-  createServerSchema,
-  TCreateServerSchema,
-} from "@/lib/zod-schema/server-schema";
+import { createServerSchema, TCreateServerSchema } from "@/lib/zod-schema";
 import { useMutation } from "@tanstack/react-query";
-import { createServerAction } from "@/actions/createServerActions";
+import { createServerAction } from "@/actions/server-actions";
 import { Spinner } from "../spinner";
 import { ErrorMessage } from "../error-message";
 import { SuccessMessage } from "../success-message";

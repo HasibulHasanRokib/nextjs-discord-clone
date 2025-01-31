@@ -22,13 +22,13 @@ model Profile {
 }
 
 model Server {
-  id         String @id @default(cuid())
+  id         String  @id @default(cuid())
   serverName String
-  imageUrl   String @db.Text
-  inviteCode String @unique
+  imageUrl   String  @db.Text
+  inviteCode String? @unique
 
-  Profile   Profile @relation(fields: [profileId], references: [id])
-  profileId String
+  Profile   Profile? @relation(fields: [profileId], references: [id])
+  profileId String?
 
   members  Member[]
   channels Channel[]

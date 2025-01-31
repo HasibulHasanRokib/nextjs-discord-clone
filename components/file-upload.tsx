@@ -1,6 +1,5 @@
 "use client";
 
-import { removeImage } from "@/lib/remove-image";
 import { UploadDropzone } from "@/lib/uploadthing";
 import { X } from "lucide-react";
 import Image from "next/image";
@@ -12,13 +11,6 @@ interface FileUploadProps {
 }
 
 export function FileUpload({ value, endpoint, onChange }: FileUploadProps) {
-  const removeFile = async (url: string) => {
-    const res = await removeImage(url);
-    if (res.success) {
-      onChange("");
-    }
-  };
-
   if (value) {
     return (
       <div className="flex flex-col items-center">
@@ -32,7 +24,7 @@ export function FileUpload({ value, endpoint, onChange }: FileUploadProps) {
           <button
             type="button"
             className="absolute right-0 top-0 rounded-full bg-destructive p-1 text-white"
-            onClick={() => removeFile(value)}
+            onClick={() => onChange("")}
           >
             <X className="h-4 w-4" />
           </button>

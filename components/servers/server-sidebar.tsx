@@ -2,7 +2,6 @@ import { CurrentUser } from "@/lib/current-user";
 import { SidebarHeader } from "./sidebar-header";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-// import { ChannelType } from "@prisma/client";
 
 export async function ServerSidebar({ serverId }: { serverId: string }) {
   const profile = await CurrentUser();
@@ -13,36 +12,11 @@ export async function ServerSidebar({ serverId }: { serverId: string }) {
       id: serverId,
     },
     include: {
-      channels: {
-        orderBy: {
-          createdAt: "asc",
-        },
-      },
-      members: {
-        include: {
-          Profile: true,
-        },
-
-        orderBy: {
-          role: "asc",
-        },
-      },
+      members: true,
+      channels: true,
     },
   });
 
-  // const textChannels = server?.channels.filter(
-  //   (channel) => channel.channelType === ChannelType.TEXT,
-  // );
-  // const voiceChannels = server?.channels.filter(
-  //   (channel) => channel.channelType === ChannelType.VOICE,
-  // );
-  // const videoChannels = server?.channels.filter(
-  //   (channel) => channel.channelType === ChannelType.VIDEO,
-  // );
-
-  // const members = server?.members.filter(
-  //   (member) => member.profileId !== profile.id,
-  // );
   const role = server?.members.find(
     (member) => member.profileId === profile.id,
   )?.role;

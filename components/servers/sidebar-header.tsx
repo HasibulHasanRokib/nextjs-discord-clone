@@ -1,6 +1,6 @@
 "use client";
-import { MemberRole } from "@prisma/client";
-import React from "react";
+
+import { MemberRole, Server } from "@prisma/client";
 
 import {
   DropdownMenu,
@@ -9,27 +9,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ServerWithMembersWithProfiles } from "@/types";
-import {
-  ChevronDown,
-  LogOut,
-  PlusCircle,
-  Settings,
-  Trash,
-  UserPlus,
-  Users,
-} from "lucide-react";
-import { useModal } from "@/store/modal-store";
+
+import { ChevronDown, LogOut, PlusCircle, Trash, Users } from "lucide-react";
+import InvitePeopleModal from "../modals/invite-people-modal";
+import { ServerSettingModal } from "../modals/server-setting-modal";
 
 interface SidebarHeaderProps {
-  server: ServerWithMembersWithProfiles;
+  server: Server;
   role?: MemberRole;
 }
 
 export function SidebarHeader({ server, role }: SidebarHeaderProps) {
   const isAdmin = role === MemberRole.ADMIN;
   const isModerator = isAdmin || role === MemberRole.MODERATOR;
-  const { onOpen } = useModal();
 
   return (
     <div>
@@ -44,10 +36,10 @@ export function SidebarHeader({ server, role }: SidebarHeaderProps) {
           {isModerator && (
             <>
               <DropdownMenuItem
-                onClick={() => onOpen("invite-people", { server })}
+                onSelect={(e) => e.preventDefault()}
                 className="cursor-pointer"
               >
-                Invite People <UserPlus className="ml-auto h-4 w-4" />
+                <InvitePeopleModal server={server} />
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer">
                 Create channel <PlusCircle className="ml-auto h-4 w-4" />
@@ -56,8 +48,11 @@ export function SidebarHeader({ server, role }: SidebarHeaderProps) {
           )}
           {isAdmin && (
             <>
-              <DropdownMenuItem className="cursor-pointer">
-                Server Setting <Settings className="ml-auto h-4 w-4" />
+              <DropdownMenuItem
+                onSelect={(e) => e.preventDefault()}
+                className="cursor-pointer"
+              >
+                <ServerSettingModal defaultValues={server} />
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer">
                 Manage Members <Users className="ml-auto h-4 w-4" />

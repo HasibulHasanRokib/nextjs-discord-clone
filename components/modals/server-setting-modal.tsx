@@ -1,5 +1,3 @@
-"use client";
-import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +7,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,62 +22,67 @@ import {
 import { Input } from "../ui/input";
 import { FileUpload } from "../file-upload";
 import { createServerSchema, TCreateServerSchema } from "@/lib/zod-schema";
+import { Settings } from "lucide-react";
+import { Server } from "@prisma/client";
 import { useMutation } from "@tanstack/react-query";
-import { createServerAction } from "@/actions/server-actions";
+import { updateServerAction } from "@/actions/server-actions";
 import { Spinner } from "../spinner";
 import { ErrorMessage } from "../error-message";
 import { SuccessMessage } from "../success-message";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
-import { TooltipAction } from "../tooltip-action";
 
-export function CreateServerModal() {
+export function ServerSettingModal({
+  defaultValues,
+}: {
+  defaultValues: Server;
+}) {
   const router = useRouter();
 
   const form = useForm<TCreateServerSchema>({
     resolver: zodResolver(createServerSchema),
     defaultValues: {
-      serverName: "",
-      imageUrl: "",
+      serverName: defaultValues.serverName,
+      imageUrl: defaultValues.imageUrl,
     },
   });
 
   const { mutate, isPending, data } = useMutation({
-    mutationKey: ["create-server"],
-    mutationFn: createServerAction,
+    mutationKey: ["update-server"],
+    mutationFn: updateServerAction,
     onSuccess: (data) => {
       if (data.success) {
-        form.reset();
-        router.push("/");
+        router.refresh();
       }
     },
   });
 
   const onSubmit = async (values: TCreateServerSchema) => {
-    mutate(values);
+    const newValues = { ...values, id: defaultValues.id };
+    mutate(newValues);
   };
 
   return (
     <Dialog>
-      <TooltipAction label="Create server" side="right" aline="center">
-        <DialogTrigger className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white hover:opacity-80">
-          <Plus />
-        </DialogTrigger>
-      </TooltipAction>
+      <DialogTrigger asChild>
+        <div className="flex w-full items-center justify-between">
+          Server Setting
+          <Settings className="h-4 w-4" />
+        </div>
+      </DialogTrigger>
       <DialogContent>
+        <div className="mt-3">
+          {data && data.error ? <ErrorMessage message={data.error} /> : ""}
+          {data && data.success ? (
+            <SuccessMessage message={data.success} />
+          ) : (
+            ""
+          )}
+        </div>
         <DialogHeader>
-          <div className="mt-3">
-            {data && data.error ? <ErrorMessage message={data.error} /> : ""}
-            {data && data.success ? (
-              <SuccessMessage message={data.success} />
-            ) : (
-              ""
-            )}
-          </div>
           <DialogTitle className="text-2xl">Customize your server</DialogTitle>
           <DialogDescription>
-            Give your server a personality with a name an image. You can always
-            change it later.
+            Update your server a personality with a name an image. You can
+            always change it later.
           </DialogDescription>
         </DialogHeader>
         <div>
@@ -109,12 +111,7 @@ export function CreateServerModal() {
                   <FormItem>
                     <FormLabel>Server name</FormLabel>
                     <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Enter server name"
-                        disabled={isPending}
-                        {...field}
-                      />
+                      <Input placeholder="Enter server name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -122,7 +119,7 @@ export function CreateServerModal() {
               />
               <DialogFooter>
                 <Button disabled={isPending} type="submit">
-                  {isPending ? <Spinner /> : "Create"}
+                  {isPending ? <Spinner /> : "Update"}
                 </Button>
               </DialogFooter>
             </form>

@@ -2,31 +2,32 @@
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
-import { useModal } from "@/store/modal-store";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
+import { Server } from "@prisma/client";
 
-export default function InvitePeopleModal() {
+export default function InvitePeopleModal({ server }: { server: Server }) {
   const [copied, setCopied] = useState(false);
-  const { isOpen, type, onClose, data } = useModal();
-  const isModalOpen = isOpen && type === "invite-people";
 
   const baseUrl =
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
       : "https://nextjs-discord-clone.vercel.app";
 
-  const inviteUrl = `${baseUrl}/invite/${data.server?.inviteCode}`;
+  const inviteUrl = `${baseUrl}/invite/${server?.inviteCode}`;
 
-  const onHandleCopy = () => {
+  const handleCopy = () => {
     navigator.clipboard.writeText(inviteUrl);
     setCopied(true);
     setTimeout(() => {
@@ -36,15 +37,33 @@ export default function InvitePeopleModal() {
 
   return (
     <>
-      <Dialog open={isModalOpen} onOpenChange={onClose}>
-        <DialogContent>
+      <Dialog>
+        <DialogTrigger asChild>
+          <div className="flex w-full items-center justify-between">
+            Invite People
+            <UserPlus className="h-4 w-4" />
+          </div>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-2xl">Invite Friends</DialogTitle>
+            <DialogTitle>Invite people link</DialogTitle>
+            <DialogDescription>
+              Anyone who has this link will be able to joi this server.
+            </DialogDescription>
           </DialogHeader>
-          <Label>Server invite link</Label>
           <div className="flex items-center space-x-2">
-            <Input defaultValue={inviteUrl} className="bg-slate-100" />
-            <Button variant={"outline"} onClick={onHandleCopy}>
+            <div className="grid flex-1 gap-2">
+              <Label htmlFor="link" className="sr-only">
+                Link
+              </Label>
+              <Input id="link" defaultValue={inviteUrl} readOnly />
+            </div>
+            <Button
+              onClick={handleCopy}
+              type="submit"
+              size="sm"
+              className="px-3"
+            >
               {copied ? (
                 <Check className="h-4 w-4" />
               ) : (
@@ -52,7 +71,13 @@ export default function InvitePeopleModal() {
               )}
             </Button>
           </div>
-          <DialogFooter></DialogFooter>
+          <DialogFooter className="sm:justify-start">
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Close
+              </Button>
+            </DialogClose>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
