@@ -12,7 +12,11 @@ export async function ServerSidebar({ serverId }: { serverId: string }) {
       id: serverId,
     },
     include: {
-      members: true,
+      members: {
+        include: {
+          Profile: true,
+        },
+      },
       channels: true,
     },
   });

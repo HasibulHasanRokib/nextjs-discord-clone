@@ -41,6 +41,7 @@ enum MemberRole {
   GUEST
   ADMIN
   MODERATOR
+  KICK
 }
 
 model Member {

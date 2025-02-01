@@ -71,12 +71,8 @@ export function ServerSettingModal({
       </DialogTrigger>
       <DialogContent>
         <div className="mt-3">
-          {data && data.error ? <ErrorMessage message={data.error} /> : ""}
-          {data && data.success ? (
-            <SuccessMessage message={data.success} />
-          ) : (
-            ""
-          )}
+          {data?.error && <ErrorMessage message={data.error} />}
+          {data?.success && <SuccessMessage message={data.success} />}
         </div>
         <DialogHeader>
           <DialogTitle className="text-2xl">Customize your server</DialogTitle>
@@ -111,7 +107,11 @@ export function ServerSettingModal({
                   <FormItem>
                     <FormLabel>Server name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter server name" {...field} />
+                      <Input
+                        type="text"
+                        placeholder="Enter server name"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

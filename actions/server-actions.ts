@@ -79,3 +79,61 @@ export async function updateServerAction(values: UpdateServerProps) {
     return { error: "Something went wrong!" };
   }
 }
+
+interface UpdateUserRoleProps {
+  memberId: string;
+  serverId: string;
+  newRole: MemberRole;
+}
+
+export async function updateUserRole(values: UpdateUserRoleProps) {
+  try {
+    if (!values) return { error: "Invalid values" };
+
+    const { memberId, newRole, serverId } = values;
+
+    const profile = await CurrentUser();
+
+    if (!profile) return { error: "Unauthorized" };
+    if (!serverId) return { error: "Server id not found" };
+    if (!memberId) return { error: "Member id not found" };
+
+    if (newRole === MemberRole.KICK) {
+      await db.server.update({
+        where: {
+          id: serverId,
+          profileId: profile.id,
+        },
+        data: {
+          members: {
+            delete: {
+              id: memberId,
+              profileId: {
+                not: profile.id,
+              },
+            },
+          },
+        },
+      });
+      return { success: "This member kick from server." };
+    }
+
+    await db.member.update({
+      where: {
+        id: memberId,
+        serverId: serverId,
+        profileId: {
+          not: profile.id,
+        },
+      },
+      data: {
+        role: newRole,
+      },
+    });
+
+    return { success: "User role update successful." };
+  } catch (error) {
+    console.log("Update user role error:", error);
+    return { error: "Something went wrong!" };
+  }
+}

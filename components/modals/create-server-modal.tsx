@@ -68,15 +68,11 @@ export function CreateServerModal() {
         </DialogTrigger>
       </TooltipAction>
       <DialogContent>
+        <div className="mt-3">
+          {data?.error && <ErrorMessage message={data.error} />}
+          {data?.success && <SuccessMessage message={data.success} />}
+        </div>
         <DialogHeader>
-          <div className="mt-3">
-            {data && data.error ? <ErrorMessage message={data.error} /> : ""}
-            {data && data.success ? (
-              <SuccessMessage message={data.success} />
-            ) : (
-              ""
-            )}
-          </div>
           <DialogTitle className="text-2xl">Customize your server</DialogTitle>
           <DialogDescription>
             Give your server a personality with a name an image. You can always

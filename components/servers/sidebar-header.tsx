@@ -1,6 +1,6 @@
 "use client";
 
-import { MemberRole, Server } from "@prisma/client";
+import { MemberRole } from "@prisma/client";
 
 import {
   DropdownMenu,
@@ -10,12 +10,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { ChevronDown, LogOut, PlusCircle, Trash, Users } from "lucide-react";
+import { ChevronDown, LogOut, PlusCircle, Trash } from "lucide-react";
 import InvitePeopleModal from "../modals/invite-people-modal";
 import { ServerSettingModal } from "../modals/server-setting-modal";
+import ManageMembersModal from "../modals/manage-members-modal";
+import { ServerWithMemberWithProfile } from "@/lib/types";
 
 interface SidebarHeaderProps {
-  server: Server;
+  server: ServerWithMemberWithProfile;
   role?: MemberRole;
 }
 
@@ -27,8 +29,8 @@ export function SidebarHeader({ server, role }: SidebarHeaderProps) {
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild className="focus:outline-none">
-          <button className="flex h-12 w-full items-center border-b-2 px-3 font-sans capitalize transition">
-            {server.serverName}
+          <button className="flex h-12 w-full items-center border-b-2 px-3 font-sans transition">
+            {server.serverName.toUpperCase()}
             <ChevronDown className="ml-auto h-5 w-5" />
           </button>
         </DropdownMenuTrigger>
@@ -54,8 +56,11 @@ export function SidebarHeader({ server, role }: SidebarHeaderProps) {
               >
                 <ServerSettingModal defaultValues={server} />
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
-                Manage Members <Users className="ml-auto h-4 w-4" />
+              <DropdownMenuItem
+                onSelect={(e) => e.preventDefault()}
+                className="cursor-pointer"
+              >
+                <ManageMembersModal server={server} />
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer">
