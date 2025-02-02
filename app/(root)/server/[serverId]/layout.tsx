@@ -33,7 +33,7 @@ export default async function ServerIdPageLayout({
     <div className="flex h-screen">
       <RootSidebar />
       <ServerSidebar serverId={serverId} />
-      <div className="flex-grow border-l px-3">{children}</div>
+      <div className="flex-grow border-l">{children}</div>
     </div>
   );
 }

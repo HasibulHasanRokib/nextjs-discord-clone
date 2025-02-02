@@ -23,7 +23,7 @@ export async function RootSidebar() {
   });
 
   return (
-    <div className="flex h-screen flex-col items-center border-r py-3">
+    <div className="flex h-screen flex-col items-center border-r bg-primary-foreground py-3">
       <CreateServerBtn />
       <Separator className="my-2" />
       <ScrollArea className="flex-grow">
