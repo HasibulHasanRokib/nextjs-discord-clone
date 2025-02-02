@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -41,6 +41,7 @@ import { useModal } from "@/store/use-modal-store";
 import { createChannelAction } from "@/actions/channel-actions";
 
 export function CreateChannelModal() {
+  const [showMessage, setShowMessage] = useState<boolean>(false);
   const router = useRouter();
   const { isOpen, type, onClose, data } = useModal();
   const { server } = data;
@@ -66,6 +67,10 @@ export function CreateChannelModal() {
       if (data.success) {
         form.reset();
         router.refresh();
+        setShowMessage(true);
+        setTimeout(() => {
+          setShowMessage(false);
+        }, 3000);
       }
     },
   });
@@ -80,8 +85,10 @@ export function CreateChannelModal() {
     <Dialog open={isModalOpen} onOpenChange={() => onClose()}>
       <DialogContent>
         <div className="mt-3">
-          {mutateData?.error && <ErrorMessage message={mutateData.error} />}
-          {mutateData?.success && (
+          {showMessage && mutateData?.error && (
+            <ErrorMessage message={mutateData.error} />
+          )}
+          {showMessage && mutateData?.success && (
             <SuccessMessage message={mutateData.success} />
           )}
         </div>
