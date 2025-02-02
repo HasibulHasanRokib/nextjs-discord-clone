@@ -137,3 +137,51 @@ export async function updateUserRole(values: UpdateUserRoleProps) {
     return { error: "Something went wrong!" };
   }
 }
+
+export async function leaveServerAction(serverId: string) {
+  if (!serverId) return { error: "Server id not found!" };
+
+  const profile = await CurrentUser();
+  if (!profile) return { error: "Unauthorized" };
+
+  await db.server.update({
+    where: {
+      id: serverId,
+      profileId: { not: profile.id },
+      members: {
+        some: {
+          profileId: profile.id,
+        },
+      },
+    },
+    data: {
+      members: {
+        deleteMany: {
+          profileId: profile.id,
+        },
+      },
+    },
+  });
+  return { success: true };
+}
+
+export async function deleteServerAction(serverId: string) {
+  if (!serverId) return { error: "Server id not found!" };
+
+  const profile = await CurrentUser();
+  if (!profile) return { error: "Unauthorized" };
+
+  try {
+    await db.member.deleteMany({ where: { serverId } });
+    await db.channel.deleteMany({ where: { serverId } });
+
+    await db.server.delete({
+      where: { id: serverId, profileId: profile.id },
+    });
+
+    return { success: "Delete successful." };
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to delete server" };
+  }
+}

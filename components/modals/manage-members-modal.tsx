@@ -6,7 +6,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -19,14 +18,12 @@ import {
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import { ServerWithMemberWithProfile } from "@/lib/types";
 import {
   Check,
   MoreVertical,
   ShieldAlert,
   ShieldCheck,
   UserMinus,
-  Users,
 } from "lucide-react";
 import { UserAvatar } from "../servers/user-avatar";
 import { MemberRole } from "@prisma/client";
@@ -37,6 +34,9 @@ import { ErrorMessage } from "../error-message";
 import { SuccessMessage } from "../success-message";
 import { useState } from "react";
 
+import { ServerWithMemberWithProfile } from "@/lib/types";
+import { useModal } from "@/store/use-modal-store";
+
 const ROLEMAP = {
   GUEST: null,
   MODERATOR: <ShieldCheck className="h-4 w-4 text-primary" />,
@@ -44,24 +44,25 @@ const ROLEMAP = {
   KICK: null,
 };
 
-export default function ManageMembersModal({
-  server,
-}: {
-  server: ServerWithMemberWithProfile;
-}) {
-  const router = useRouter();
+export default function ManageMembersModal() {
   const [showMessage, setShowMessage] = useState<boolean>(false);
-  const { mutate, data } = useMutation({
+  const router = useRouter();
+  const { isOpen, type, data, onClose } = useModal();
+
+  const isModalOpen = isOpen && type === "manage-member";
+  const { server } = data as { server: ServerWithMemberWithProfile };
+
+  const { mutate, data: mutateData } = useMutation({
     mutationKey: ["update-user-role"],
     mutationFn: updateUserRole,
     onSuccess: (data) => {
-      if (data) {
+      if (data.success) {
         setShowMessage(true);
         router.refresh();
+        setTimeout(() => {
+          setShowMessage(false);
+        }, 2000);
       }
-      setTimeout(() => {
-        setShowMessage(false);
-      }, 2000);
     },
   });
 
@@ -70,26 +71,22 @@ export default function ManageMembersModal({
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <div className="flex w-full items-center justify-between">
-          Manage Members
-          <Users className="h-4 w-4" />
-        </div>
-      </DialogTrigger>
+    <Dialog open={isModalOpen} onOpenChange={() => onClose()}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-center text-2xl">
             Manage Members
           </DialogTitle>
           <DialogDescription className="text-center">
-            {server.members.length} Members
+            {server?.members.length} Members
           </DialogDescription>
         </DialogHeader>
         <div>
-          {showMessage && data?.error && <ErrorMessage message={data.error} />}
-          {showMessage && data?.success && (
-            <SuccessMessage message={data.success} />
+          {showMessage && mutateData?.error && (
+            <ErrorMessage message={mutateData.error} />
+          )}
+          {showMessage && mutateData?.success && (
+            <SuccessMessage message={mutateData.success} />
           )}
         </div>
         <div>

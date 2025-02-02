@@ -8,17 +8,20 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { Check, Copy, UserPlus } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { Server } from "@prisma/client";
+import { useModal } from "@/store/use-modal-store";
 
-export default function InvitePeopleModal({ server }: { server: Server }) {
+export default function InvitePeopleModal() {
+  const { isOpen, onClose, data, type } = useModal();
   const [copied, setCopied] = useState(false);
+
+  const isModalOpen = isOpen && type === "invite-people";
+  const { server } = data;
 
   const baseUrl =
     process.env.NODE_ENV === "development"
@@ -36,13 +39,7 @@ export default function InvitePeopleModal({ server }: { server: Server }) {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <div className="flex w-full items-center justify-between">
-          Invite People
-          <UserPlus className="h-4 w-4" />
-        </div>
-      </DialogTrigger>
+    <Dialog open={isModalOpen} onOpenChange={() => onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Invite people link</DialogTitle>

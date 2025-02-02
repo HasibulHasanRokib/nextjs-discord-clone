@@ -7,7 +7,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import { Button } from "../ui/button";
@@ -31,11 +30,14 @@ import { Spinner } from "../spinner";
 import { ErrorMessage } from "../error-message";
 import { SuccessMessage } from "../success-message";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
-import { TooltipAction } from "../tooltip-action";
+
+import { useModal } from "@/store/use-modal-store";
 
 export function CreateServerModal() {
+  const { isOpen, type, onClose } = useModal();
   const router = useRouter();
+
+  const isModalOpen = isOpen && type === "create-modal";
 
   const form = useForm<TCreateServerSchema>({
     resolver: zodResolver(createServerSchema),
@@ -61,12 +63,7 @@ export function CreateServerModal() {
   };
 
   return (
-    <Dialog>
-      <TooltipAction label="Create server" side="right" aline="center">
-        <DialogTrigger className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white hover:opacity-80">
-          <Plus />
-        </DialogTrigger>
-      </TooltipAction>
+    <Dialog open={isModalOpen} onOpenChange={() => onClose()}>
       <DialogContent>
         <div className="mt-3">
           {data?.error && <ErrorMessage message={data.error} />}

@@ -3,6 +3,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "./providers";
+import ModalsProvider from "@/components/modals/modals-provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,7 +20,7 @@ export default function RootLayout({
       <Providers>
         <html lang="en" suppressHydrationWarning>
           <body
-            data-new-gr-c-s-check-loaded="14.1218.0"
+            data-new-gr-c-s-check-loaded="14.1220.0"
             data-gr-ext-installed=""
           >
             <ThemeProvider
@@ -28,6 +29,7 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
+              <ModalsProvider />
               {children}
             </ThemeProvider>
           </body>

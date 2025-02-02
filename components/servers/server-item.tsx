@@ -20,9 +20,9 @@ export function ServerItem({ id, imageUrl, name }: ServerItemProps) {
       <button type="button" onClick={() => router.push(`/server/${id}`)}>
         <div
           className={cn(
-            "relative mx-3 flex h-12 w-12 overflow-hidden rounded-full transition-all hover:rounded-2xl",
+            "hover:ring-rose-600hover:ring-offset-1 relative mx-3 flex h-10 w-10 overflow-hidden rounded-2xl transition-all hover:ring-2 hover:ring-rose-600",
             params?.serverId === id
-              ? "rounded-2xl ring-2 ring-primary ring-offset-2"
+              ? "rounded-2xl ring-2 ring-rose-600"
               : "ring-transparent",
           )}
         >

@@ -16,8 +16,15 @@ export async function ServerSidebar({ serverId }: { serverId: string }) {
         include: {
           Profile: true,
         },
+        orderBy: {
+          createdAt: "asc",
+        },
       },
-      channels: true,
+      channels: {
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
     },
   });
 
@@ -28,7 +35,7 @@ export async function ServerSidebar({ serverId }: { serverId: string }) {
   if (!server) return redirect("/");
 
   return (
-    <div className="w-60 bg-slate-50">
+    <div className="w-60 bg-secondary">
       <SidebarHeader server={server} role={role} />
     </div>
   );

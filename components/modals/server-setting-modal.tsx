@@ -1,3 +1,4 @@
+"use client";
 import {
   Dialog,
   DialogContent,
@@ -5,7 +6,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
@@ -22,31 +22,44 @@ import {
 import { Input } from "../ui/input";
 import { FileUpload } from "../file-upload";
 import { createServerSchema, TCreateServerSchema } from "@/lib/zod-schema";
-import { Settings } from "lucide-react";
-import { Server } from "@prisma/client";
+
 import { useMutation } from "@tanstack/react-query";
 import { updateServerAction } from "@/actions/server-actions";
 import { Spinner } from "../spinner";
 import { ErrorMessage } from "../error-message";
 import { SuccessMessage } from "../success-message";
 import { useRouter } from "next/navigation";
+import { useModal } from "@/store/use-modal-store";
+import { ServerWithMemberWithProfile } from "@/lib/types";
+import { useEffect } from "react";
 
-export function ServerSettingModal({
-  defaultValues,
-}: {
-  defaultValues: Server;
-}) {
+export function ServerSettingModal() {
+  const { isOpen, type, onClose, data } = useModal();
   const router = useRouter();
+
+  const isModalOpen = isOpen && type === "server-setting";
+  const { server } = data as { server: ServerWithMemberWithProfile };
 
   const form = useForm<TCreateServerSchema>({
     resolver: zodResolver(createServerSchema),
     defaultValues: {
-      serverName: defaultValues.serverName,
-      imageUrl: defaultValues.imageUrl,
+      serverName: "",
+      imageUrl: "",
     },
   });
 
-  const { mutate, isPending, data } = useMutation({
+  useEffect(() => {
+    if (server) {
+      form.setValue("serverName", server.serverName);
+      form.setValue("imageUrl", server.imageUrl);
+    }
+  }, [server, form]);
+
+  const {
+    mutate,
+    isPending,
+    data: mutateData,
+  } = useMutation({
     mutationKey: ["update-server"],
     mutationFn: updateServerAction,
     onSuccess: (data) => {
@@ -57,22 +70,18 @@ export function ServerSettingModal({
   });
 
   const onSubmit = async (values: TCreateServerSchema) => {
-    const newValues = { ...values, id: defaultValues.id };
+    const newValues = { ...values, id: server.id };
     mutate(newValues);
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <div className="flex w-full items-center justify-between">
-          Server Setting
-          <Settings className="h-4 w-4" />
-        </div>
-      </DialogTrigger>
+    <Dialog open={isModalOpen} onOpenChange={() => onClose()}>
       <DialogContent>
         <div className="mt-3">
-          {data?.error && <ErrorMessage message={data.error} />}
-          {data?.success && <SuccessMessage message={data.success} />}
+          {mutateData?.error && <ErrorMessage message={mutateData.error} />}
+          {mutateData?.success && (
+            <SuccessMessage message={mutateData.success} />
+          )}
         </div>
         <DialogHeader>
           <DialogTitle className="text-2xl">Customize your server</DialogTitle>

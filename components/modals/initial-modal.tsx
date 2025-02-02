@@ -66,9 +66,7 @@ export function InitialModal() {
             {data?.success && <SuccessMessage message={data.success} />}
           </div>
           <DialogHeader>
-            <DialogTitle className="text-2xl">
-              Customize your server
-            </DialogTitle>
+            <DialogTitle className="text-2xl">Create your server</DialogTitle>
             <DialogDescription>
               Give your server a personality with a name an image. You can
               always change it later.
