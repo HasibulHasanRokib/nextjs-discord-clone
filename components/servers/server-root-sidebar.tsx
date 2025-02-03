@@ -6,9 +6,9 @@ import { redirect } from "next/navigation";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { db } from "@/lib/db";
 import { ServerItem } from "./server-item";
-import CreateServerBtn from "./create-server-btn";
+import { ServerCreateBtn } from "./server-create-btn";
 
-export async function RootSidebar() {
+export async function ServerRootSidebar() {
   const profile = await CurrentUser();
   if (!profile) return redirect("/");
 
@@ -23,8 +23,8 @@ export async function RootSidebar() {
   });
 
   return (
-    <div className="flex h-screen flex-col items-center border-r bg-primary-foreground py-3">
-      <CreateServerBtn />
+    <div className="flex flex-col items-center border-r py-3">
+      <ServerCreateBtn />
       <Separator className="my-2" />
       <ScrollArea className="flex-grow">
         {servers.map((server) => (

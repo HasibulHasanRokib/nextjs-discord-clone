@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteServerAction } from "@/actions/server-actions";
+import { deleteChannelAction } from "@/actions/channel-actions";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,23 +17,24 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Spinner } from "../spinner";
 
-export default function DeleteServerModal() {
+export default function DeleteChannelModal() {
   const router = useRouter();
   const { isOpen, onClose, data, type } = useModal();
 
-  const isModalOpen = isOpen && type === "delete-server";
-  const { server } = data;
+  const isModalOpen = isOpen && type === "delete-channel";
+  const { server, channel } = data;
 
   const { mutate, isPending } = useMutation({
-    mutationKey: ["delete-server"],
-    mutationFn: deleteServerAction,
+    mutationKey: ["delete-channel"],
+    mutationFn: deleteChannelAction,
     onSuccess: (data) => {
-      if (data.success) {
+      if (data) {
         router.refresh();
       }
     },
   });
   if (!server) return null;
+  if (!channel) return null;
 
   return (
     <AlertDialog open={isModalOpen} onOpenChange={() => onClose()}>
@@ -41,16 +42,20 @@ export default function DeleteServerModal() {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete this{" "}
+            This action cannot be undone. This will permanently delete your{" "}
             <span className="font-semibold capitalize text-primary">
-              {server?.serverName}
+              {channel?.channelName}
             </span>{" "}
-            server.
+            channel.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => mutate(server.id)}>
+          <AlertDialogAction
+            onClick={() =>
+              mutate({ serverId: server.id, channelId: channel.id })
+            }
+          >
             {isPending ? <Spinner /> : "Delete"}
           </AlertDialogAction>
         </AlertDialogFooter>

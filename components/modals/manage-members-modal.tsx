@@ -25,7 +25,7 @@ import {
   ShieldCheck,
   UserMinus,
 } from "lucide-react";
-import { UserAvatar } from "../servers/user-avatar";
+import { UserAvatar } from "../user-avatar";
 import { MemberRole } from "@prisma/client";
 import { useMutation } from "@tanstack/react-query";
 import { updateUserRole } from "@/actions/server-actions";
@@ -36,6 +36,7 @@ import { useState } from "react";
 
 import { ServerWithMemberWithProfile } from "@/lib/types";
 import { useModal } from "@/store/use-modal-store";
+import { Spinner } from "../spinner";
 
 const ROLEMAP = {
   GUEST: null,
@@ -47,21 +48,27 @@ const ROLEMAP = {
 export default function ManageMembersModal() {
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const router = useRouter();
-  const { isOpen, type, data, onClose } = useModal();
+  const { isOpen, type, data, onClose, onOpen } = useModal();
 
   const isModalOpen = isOpen && type === "manage-member";
   const { server } = data as { server: ServerWithMemberWithProfile };
 
-  const { mutate, data: mutateData } = useMutation({
+  const {
+    mutate,
+    data: mutateData,
+    isPending,
+  } = useMutation({
     mutationKey: ["update-user-role"],
     mutationFn: updateUserRole,
     onSuccess: (data) => {
       if (data.success) {
-        setShowMessage(true);
         router.refresh();
+        onOpen("manage-member", { server: data.updateMember });
+        setShowMessage(true);
+        console.log(data.updateMember);
         setTimeout(() => {
           setShowMessage(false);
-        }, 2000);
+        }, 3000);
       }
     },
   });
@@ -107,7 +114,11 @@ export default function ManageMembersModal() {
                   <div className="ml-auto">
                     <DropdownMenu>
                       <DropdownMenuTrigger>
-                        <MoreVertical className="h-4 w-4 text-muted-foreground" />
+                        {isPending ? (
+                          <Spinner />
+                        ) : (
+                          <MoreVertical className="h-4 w-4 text-muted-foreground" />
+                        )}
                       </DropdownMenuTrigger>
                       <DropdownMenuContent side="right">
                         <DropdownMenuLabel>Select role</DropdownMenuLabel>

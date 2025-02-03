@@ -1,11 +1,12 @@
 import { CurrentUser } from "@/lib/current-user";
-import { SidebarHeader } from "./sidebar-header";
+import { ServerSidebarHeader } from "./server-sidebar-header";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { ScrollArea } from "../ui/scroll-area";
 import { ChannelType } from "@prisma/client";
 import { ServerSection } from "./server-section";
 import ServerChannel from "./server-channel";
+import { ServerMember } from "./server-member";
 
 export async function ServerSidebar({ serverId }: { serverId: string }) {
   const profile = await CurrentUser();
@@ -47,9 +48,13 @@ export async function ServerSidebar({ serverId }: { serverId: string }) {
   const videoChannels = server.channels.filter(
     (channel) => channel.channelType === ChannelType.VIDEO,
   );
+
+  const members = server.members.filter(
+    (member) => member.profileId !== profile.id,
+  );
   return (
     <div className="w-60 bg-secondary">
-      <SidebarHeader server={server} role={role} />
+      <ServerSidebarHeader server={server} role={role} />
       <ScrollArea>
         {!!textChannels.length && (
           <div className="mb-2">
@@ -96,7 +101,7 @@ export async function ServerSidebar({ serverId }: { serverId: string }) {
               role={role}
               sectionType="channels"
               server={server}
-              channelType={ChannelType.VOICE}
+              channelType={ChannelType.VIDEO}
             />
             {videoChannels.map((channel) => (
               <ServerChannel
@@ -105,6 +110,19 @@ export async function ServerSidebar({ serverId }: { serverId: string }) {
                 role={role}
                 channel={channel}
               />
+            ))}
+          </div>
+        )}
+        {!!members.length && (
+          <div className="mb-2">
+            <ServerSection
+              label="Members"
+              role={role}
+              sectionType="members"
+              server={server}
+            />
+            {members.map((member) => (
+              <ServerMember key={member.id} member={member} />
             ))}
           </div>
         )}

@@ -6,6 +6,7 @@ import { createServerSchema, TCreateServerSchema } from "@/lib/zod-schema";
 import { MemberRole } from "@prisma/client";
 import { v4 as uuid } from "uuid";
 
+//create server:
 export async function createServerAction(values: TCreateServerSchema) {
   try {
     const validation = createServerSchema.safeParse(values);
@@ -16,7 +17,7 @@ export async function createServerAction(values: TCreateServerSchema) {
     const profile = await CurrentUser();
 
     if (!profile) return { error: "Unauthorized" };
-    await db.server.create({
+    const newServer = await db.server.create({
       data: {
         serverName,
         imageUrl,
@@ -37,13 +38,14 @@ export async function createServerAction(values: TCreateServerSchema) {
       },
     });
 
-    return { success: "Server create successful." };
+    return { success: "Server create successful.", newServer };
   } catch (error) {
     console.log(error);
     return { error: "Something went wrong!" };
   }
 }
 
+//Update server:
 interface UpdateServerProps {
   id: string;
   serverName: string;
@@ -80,6 +82,7 @@ export async function updateServerAction(values: UpdateServerProps) {
   }
 }
 
+//Update manager role:
 interface UpdateUserRoleProps {
   memberId: string;
   serverId: string;
@@ -118,26 +121,42 @@ export async function updateUserRole(values: UpdateUserRoleProps) {
       return { success: "This member kick from server." };
     }
 
-    await db.member.update({
+    const updateMember = await db.server.update({
       where: {
-        id: memberId,
-        serverId: serverId,
-        profileId: {
-          not: profile.id,
-        },
+        id: serverId,
+        profileId: profile.id,
       },
       data: {
-        role: newRole,
+        members: {
+          update: {
+            where: {
+              id: memberId,
+            },
+            data: {
+              role: newRole,
+            },
+          },
+        },
+      },
+      include: {
+        members: {
+          select: {
+            id: true,
+            Profile: true,
+            role: true,
+          },
+        },
       },
     });
 
-    return { success: "User role update successful." };
+    return { success: "User role update successful.", updateMember };
   } catch (error) {
     console.log("Update user role error:", error);
     return { error: "Something went wrong!" };
   }
 }
 
+//Leave server:
 export async function leaveServerAction(serverId: string) {
   if (!serverId) return { error: "Server id not found!" };
 
@@ -165,6 +184,7 @@ export async function leaveServerAction(serverId: string) {
   return { success: true };
 }
 
+//Delete server:
 export async function deleteServerAction(serverId: string) {
   if (!serverId) return { error: "Server id not found!" };
 

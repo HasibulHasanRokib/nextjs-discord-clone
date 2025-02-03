@@ -128,7 +128,7 @@ export function ServerSettingModal() {
               />
               <DialogFooter>
                 <Button disabled={isPending} type="submit">
-                  {isPending ? <Spinner /> : "Update"}
+                  {isPending ? <Spinner text="Loading" /> : "Update"}
                 </Button>
               </DialogFooter>
             </form>

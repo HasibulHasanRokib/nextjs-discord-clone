@@ -1,4 +1,4 @@
-import { RootSidebar } from "@/components/servers/root-sidebar";
+import { ServerRootSidebar } from "@/components/servers/server-root-sidebar";
 import { ServerSidebar } from "@/components/servers/server-sidebar";
 import { CurrentUser } from "@/lib/current-user";
 import { db } from "@/lib/db";
@@ -31,9 +31,9 @@ export default async function ServerIdPageLayout({
 
   return (
     <div className="flex h-screen">
-      <RootSidebar />
+      <ServerRootSidebar />
       <ServerSidebar serverId={serverId} />
-      <div className="flex-grow border-l">{children}</div>
+      {children}
     </div>
   );
 }

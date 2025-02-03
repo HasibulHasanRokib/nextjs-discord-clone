@@ -114,7 +114,7 @@ export function InitialModal() {
                 />
                 <DialogFooter>
                   <Button disabled={isPending} type="submit">
-                    {isPending ? <Spinner /> : "Create"}
+                    {isPending ? <Spinner text="Creating" /> : "Create"}
                   </Button>
                 </DialogFooter>
               </form>

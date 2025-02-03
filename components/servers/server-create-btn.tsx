@@ -4,7 +4,7 @@ import { TooltipAction } from "../tooltip-action";
 import { Plus } from "lucide-react";
 import { useModal } from "@/store/use-modal-store";
 
-export default function CreateServerBtn() {
+export function ServerCreateBtn() {
   const { onOpen } = useModal();
   return (
     <TooltipAction label="Create server" side="right" aline="center">

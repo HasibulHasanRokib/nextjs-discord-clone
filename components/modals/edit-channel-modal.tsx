@@ -38,15 +38,15 @@ import { useRouter } from "next/navigation";
 
 import { ChannelType } from "@prisma/client";
 import { useModal } from "@/store/use-modal-store";
-import { createChannelAction } from "@/actions/channel-actions";
+import { editChannelAction } from "@/actions/channel-actions";
 
-export function CreateChannelModal() {
+export function EditChannelModal() {
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const router = useRouter();
   const { isOpen, type, onClose, data } = useModal();
-  const { server, channelType } = data;
+  const { server, channel } = data;
 
-  const isModalOpen = isOpen && type === "create-channel";
+  const isModalOpen = isOpen && type === "edit-channel";
 
   const form = useForm<TCreateChannelSchema>({
     resolver: zodResolver(createChannelSchema),
@@ -57,23 +57,19 @@ export function CreateChannelModal() {
   });
 
   useEffect(() => {
-    if (channelType) {
-      form.setValue("type", channelType);
-    } else {
-      form.setValue("type", ChannelType.TEXT);
-    }
-  }, [channelType, form]);
+    form.setValue("channelName", channel?.channelName || "");
+    form.setValue("type", channel?.channelType || ChannelType.TEXT);
+  }, [channel, form]);
 
   const {
     isPending,
     data: mutateData,
     mutate,
   } = useMutation({
-    mutationKey: ["create-channel"],
-    mutationFn: createChannelAction,
+    mutationKey: ["edit-channel"],
+    mutationFn: editChannelAction,
     onSuccess: (data) => {
       if (data.success) {
-        form.reset();
         router.refresh();
         setShowMessage(true);
         setTimeout(() => {
@@ -83,9 +79,14 @@ export function CreateChannelModal() {
     },
   });
   if (!server) return null;
+  if (!channel) return null;
 
   const onSubmit = async (values: TCreateChannelSchema) => {
-    const newValues = { ...values, serverId: server.id };
+    const newValues = {
+      ...values,
+      serverId: server.id,
+      channelId: channel?.id,
+    };
     mutate(newValues);
   };
 
@@ -102,7 +103,7 @@ export function CreateChannelModal() {
         </div>
         <DialogHeader>
           <DialogTitle className="text-center text-2xl">
-            Create a channel
+            Edit your channel
           </DialogTitle>
         </DialogHeader>
         <div>
@@ -160,7 +161,7 @@ export function CreateChannelModal() {
               />
               <DialogFooter>
                 <Button disabled={isPending} type="submit">
-                  {isPending ? <Spinner text="Creating" /> : "Create"}
+                  {isPending ? <Spinner text="Updating" /> : "Update"}
                 </Button>
               </DialogFooter>
             </form>

@@ -1,8 +1,7 @@
 "use client";
 import { ServerWithMemberWithProfile } from "@/lib/types";
 import { ChannelType, MemberRole } from "@prisma/client";
-import { Plus } from "lucide-react";
-import React from "react";
+import { Plus, Settings } from "lucide-react";
 import { TooltipAction } from "../tooltip-action";
 import { useModal } from "@/store/use-modal-store";
 
@@ -28,8 +27,17 @@ export function ServerSection({
       <p className="text-sm font-semibold">{label}</p>
       {role !== MemberRole.GUEST && sectionType === "channels" && (
         <TooltipAction label="Create Channel" side="right" aline="center">
-          <button onClick={() => onOpen("create-channel", { server })}>
+          <button
+            onClick={() => onOpen("create-channel", { channelType, server })}
+          >
             <Plus className="h-4 w-4" />
+          </button>
+        </TooltipAction>
+      )}
+      {role === MemberRole.ADMIN && sectionType === "members" && (
+        <TooltipAction label="manage member" side="right" aline="center">
+          <button onClick={() => onOpen("manage-member", { server })}>
+            <Settings className="h-4 w-4" />
           </button>
         </TooltipAction>
       )}

@@ -53,7 +53,8 @@ export function CreateServerModal() {
     onSuccess: (data) => {
       if (data.success) {
         form.reset();
-        router.push("/");
+        router.push(`/server/${data.newServer.id}`);
+        onClose();
       }
     },
   });
@@ -115,7 +116,7 @@ export function CreateServerModal() {
               />
               <DialogFooter>
                 <Button disabled={isPending} type="submit">
-                  {isPending ? <Spinner /> : "Create"}
+                  {isPending ? <Spinner text="Creating" /> : "Create"}
                 </Button>
               </DialogFooter>
             </form>

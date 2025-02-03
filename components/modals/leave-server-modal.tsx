@@ -15,6 +15,7 @@ import {
 import { useModal } from "@/store/use-modal-store";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { Spinner } from "../spinner";
 
 export default function LeaveServerModal() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function LeaveServerModal() {
   const isModalOpen = isOpen && type === "leave-server";
   const { server } = data;
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: ["leave-server"],
     mutationFn: leaveServerAction,
     onSuccess: (data) => {
@@ -51,7 +52,7 @@ export default function LeaveServerModal() {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={() => mutate(server.id)}>
-            Leave
+            {isPending ? <Spinner /> : "Leave"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

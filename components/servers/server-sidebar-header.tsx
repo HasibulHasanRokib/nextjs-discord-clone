@@ -28,7 +28,7 @@ interface SidebarHeaderProps {
   role?: MemberRole;
 }
 
-export function SidebarHeader({ server, role }: SidebarHeaderProps) {
+export function ServerSidebarHeader({ server, role }: SidebarHeaderProps) {
   const { onOpen } = useModal();
 
   const isAdmin = role === MemberRole.ADMIN;
